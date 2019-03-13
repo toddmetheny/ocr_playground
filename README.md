@@ -1,1 +1,1 @@
-# this is a readme
+# ocr project that takes text from image and compares to the clutchprep.com search results
