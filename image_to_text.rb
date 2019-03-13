@@ -20,7 +20,7 @@ class ImageToText
         file << open(@file).read
       end
     else # it's a path instead
-      @image_file = File.new(@file) # File | Image file to perform OCR on.  Common file formats such as PNG, JPEG are supported.
+      @image_file = File.new(@file)
     end
   end
 
