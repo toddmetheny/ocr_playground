@@ -1,0 +1,99 @@
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"></link>
+<script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+
+<style>
+  .uploadOuter {
+    text-align: center;
+    padding: 20px;
+  }
+
+  strong {
+    padding: 0 10px
+  }
+
+  .dragBox {
+    width: 250px;
+    height: 100px;
+    margin: 0 auto;
+    position: relative;
+    text-align: center;
+    font-weight: bold;
+    line-height: 95px;
+    color: #999;
+    border: 2px dashed #ccc;
+    display: inline-block;
+    transition: transform 0.3s;
+  }
+
+  input[type="file"] {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    opacity: 0;
+    top: 0;
+    left: 0;
+  }
+
+  .dragging {
+    transform: scale(1.1);
+  }
+
+  #preview {
+    text-align: center;
+  }
+
+  img {
+    max-width: 100%
+  }
+</style>
+
+<div class="uploadOuter">
+    <label for="uploadFile" class="btn btn-primary">Upload Image</label>
+    <strong>OR</strong>
+  <span class="dragBox" >
+    Drag and Drop image here
+    <input type="file" onChange="dragNdrop(event)"  ondragover="drag()" ondrop="drop()" id="uploadFile"  />
+  </span>
+</div>
+<div id="preview"></div>
+  
+<script>
+  function dragNdrop(event) {
+    var fileName = URL.createObjectURL(event.target.files[0]);
+    console.log('fileName', fileName);
+    var preview = document.getElementById("preview");
+    var previewImg = document.createElement("img");
+    previewImg.setAttribute("src", fileName);
+    preview.innerHTML = "";
+    preview.appendChild(previewImg);
+  }
+  
+  function drag() {
+    document.getElementById('uploadFile').parentNode.className = 'dragging dragBox';
+  }
+
+  function drop() {
+    document.getElementById('uploadFile').parentNode.className = 'dragBox';
+  }
+  $(document).ready(function(){
+
+
+    // get the input on change
+    $('input[type="file"]').change(function(event){
+      console.log('changed', event.target.files[0]);
+
+      var formData = new FormData()
+      formData.append('file', event.target.files[0])
+
+      $.ajax({
+        method: 'POST',
+        url: '/get_image_url',
+        data: formData,
+        processData: false,
+        contentType: false,
+      }).done(function(response){
+        console.log('response', response);
+      })
+    })
+  });
+</script>
