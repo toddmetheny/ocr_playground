@@ -33,8 +33,12 @@ class ImageToText
       begin
         result = @api_instance.image_ocr_post(self.image_file, opts)
         
-        text_result = result.text_result.gsub("\n", "")
-        return text_result
+        if result.text_result.empty?
+          return ''
+        else
+          text_result = result.text_result.gsub("\n", "")
+          return text_result
+        end
       rescue CloudmersiveOcrApiClient::ApiError => e
         puts "Exception when calling ImageOcrApi->image_ocr_post: #{e}"
       end

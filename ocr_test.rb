@@ -16,16 +16,21 @@ post '/get_image_url' do
   
   to_s3 = SendToS3.new(file)
   response_hsh = to_s3.upload
-  p "response_hsh.inspect before text_from_image: #{response_hsh.inspect}"
 
+  # get text from image
   ocr_image = ImageToText.new(response_hsh[:url], true)
   text_from_image = ocr_image.fetch_text
   
   response_hsh[:text_from_image] = text_from_image
   
-  p "response_hash: #{response_hsh}"
-  search = Search.new(text_from_image)
-  results = search.fetch_results
+  # search the text you got from the image
+  unless text_from_image.empty?
+    search = Search.new(text_from_image)
+    results = search.fetch_results
+  else
+    results = []
+  end
+  
 
   if results.any?
     response_hsh[:results] = results
