@@ -29,8 +29,8 @@ post '/get_image_url' do
   search = Search.new(text_from_image)
   results = search.fetch_results
 
-  if results['hits'].any?
-    response_hsh[:results] = results['hits']
+  if results.any?
+    response_hsh[:results] = results
   end
 
   content_type :json

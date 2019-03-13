@@ -1,5 +1,6 @@
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"></link>
 <script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
 
 <style>
   .uploadOuter {
@@ -39,11 +40,56 @@
   }
 
   #preview {
+    display: none;
     text-align: center;
+    border: solid 1px #D3D3D3;
+    padding: 22px;
+    width: 81%;
+    margin: 0 auto;
+    margin-bottom: 22px;
   }
 
   img {
-    max-width: 100%
+    max-width: 100%;
+  }
+
+  .ocr {
+    background-color: #D3D3D3;
+    max-width: 81%;
+    padding: 25px;
+    margin: 0 auto;
+    box-shadow: 5px 10px #888888;
+  }
+
+  .ocr__text-result-label, .ocr__search-results-label {
+    margin-left: 30px;
+    font-size: 14px;
+    margin-top: 15px;
+    font-family: 'Montserrat', sans-serif;
+    color: #777;
+  }
+
+  .ocr__text-result {
+    /* font-style: italic; */
+    font-size: 19px;
+    font-family: 'Montserrat', sans-serif;
+    color: #777;
+    margin-left: 45px;
+  }
+
+  .ocr__search-results-list {
+    list-style-type: none;
+  }
+
+  .ocr__search-results-list-url {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    margin-bottom: 5px;
+    margin-left: 5px;
+  }
+
+  .ocr__list-item {
+    margin-bottom: 10px;
   }
 </style>
 
@@ -56,18 +102,39 @@
   </span>
 </div>
 <div id="preview"></div>
+
+<div class="gif-wrapper" style="position: relative; width: 100%; display: none;">
+  <div class="loading-gif" style="position:absolute; top: 10px; left: 44%;">
+    <img src="https://s3.amazonaws.com/lightcat-files/clutch_gifs/Loading_5.gif" alt="">
+  </div>
+</div>
+
+<div class="ocr" style="display:none;">
+  <div class="ocr__text">
+    <label for="ocr__text-result" class="ocr__text-result-label ">Text from image:</label>
+    <h5 class="ocr__text-result"></h5>
+  </div>
+
+  <div class="ocr__search-results">
+    <label class="ocr__search-results-label ">Search Results from Clutch:</label>
+    <ul class="ocr__search-results-list"></ul>
+  </div>
+</div>
   
 <script>
   function dragNdrop(event) {
     var fileName = URL.createObjectURL(event.target.files[0]);
-    console.log('fileName', fileName);
     var preview = document.getElementById("preview");
     var previewImg = document.createElement("img");
     previewImg.setAttribute("src", fileName);
     preview.innerHTML = "";
     preview.appendChild(previewImg);
+    $('#preview').show();
+
+    $('.gif-wrapper').fadeIn(1000);
+    
   }
-  
+
   function drag() {
     document.getElementById('uploadFile').parentNode.className = 'dragging dragBox';
   }
@@ -77,10 +144,8 @@
   }
   $(document).ready(function(){
 
-
-    // get the input on change
     $('input[type="file"]').change(function(event){
-      console.log('changed', event.target.files[0]);
+
 
       var formData = new FormData()
       formData.append('file', event.target.files[0])
@@ -92,7 +157,15 @@
         processData: false,
         contentType: false,
       }).done(function(response){
-        console.log('response', response);
+
+        $('.ocr__text-result').text(response.text_from_image)
+
+        response.results.forEach(function(result){
+          $('.ocr__search-results-list').append("<li class='ocr__list-item'> <a class='ocr__search-results-list-url' href=" + result.url + ">"+ result.description +  "</a></li>");
+        });
+
+        $('.gif-wrapper').fadeOut(1000);
+        $('.ocr').fadeIn(1000);
       })
     })
   });
