@@ -1,3 +1,5 @@
+require 'algoliasearch'
+
 class Search
   
   def initialize(text)
