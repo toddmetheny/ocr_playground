@@ -12,7 +12,15 @@ end
 
 post '/get_image_url' do
   file = params['file']
-  filename = "ocr_test/#{file['filename']}"
+  original_name = file['filename']
+  
+  if original_name.match(/\s/)
+    original_name = original_name.tr(" ", "_")
+  end
+  
+  filename = "ocr_test/#{original_name}"
+
+  puts "filename: #{filename}"
   
   to_s3 = SendToS3.new(file)
   response_hsh = to_s3.upload
@@ -31,10 +39,7 @@ post '/get_image_url' do
     results = []
   end
   
-
-  if results.any?
-    response_hsh[:results] = results
-  end
+  response_hsh[:results] = results
 
   content_type :json
   response_hsh.to_json

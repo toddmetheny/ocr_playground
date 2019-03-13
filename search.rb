@@ -9,10 +9,11 @@ class Search
   end
 
   def fetch_results
-    results = @index.search(@text)
     results_arr = []
+    results = @index.search(@text)
+
     if results['hits'].empty?
-      return "empty"
+      return []
     else
       base_url = "https://www.clutchprep.com"
       results['hits'].each do |hit|

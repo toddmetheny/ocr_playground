@@ -160,11 +160,24 @@
         contentType: false,
       }).done(function(response){
 
-        $('.ocr__text-result').text(response.text_from_image)
+        console.log('response', response);
 
-        response.results.forEach(function(result){
-          $('.ocr__search-results-list').append("<li class='ocr__list-item'> <a class='ocr__search-results-list-url' href=" + result.url + ">"+ result.description +  "</a></li>");
-        });
+        if(response.text_from_image == ''){
+          $('.ocr__text-result').text("Unable to read text from image");
+        } else {
+          $('.ocr__text-result').text(response.text_from_image)
+        }
+
+        var results = response.results
+
+        if(results.length == 0 || results == undefined){
+          $('.ocr__search-results-list').append("<li class='ocr__list-item'><h5>No results</h5></li>");
+        } else {
+          results.forEach(function(result){
+            $('.ocr__search-results-list').append("<li class='ocr__list-item'> <a class='ocr__search-results-list-url' href=" + result.url + ">"+ result.description +  "</a></li>");
+          });
+        }
+
 
         $('.gif-wrapper').fadeOut(1000);
         $('.ocr').fadeIn(1000);
