@@ -160,8 +160,6 @@
         contentType: false,
       }).done(function(response){
 
-        console.log('response', response);
-
         if(response.text_from_image == ''){
           $('.ocr__text-result').text("Unable to read text from image");
         } else {
